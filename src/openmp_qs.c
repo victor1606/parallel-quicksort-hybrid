@@ -4,10 +4,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define ARRAY_MAX_SIZE 500000
-
-int arr[ARRAY_MAX_SIZE];
-
 void swap(int *a, int *b)
 {
     int t = *a;
@@ -105,23 +101,23 @@ int main(int argc, char *argv[])
 
     double start_time, run_time;
 
-    omp_set_num_threads(8);
+    omp_set_num_threads(4);
     start_time = omp_get_wtime();
 
     #pragma omp parallel
     {
-        #pragma omp single nowait
+        #pragma omp single
         quickSort(arr, 0, n - 1);
     }
 
     run_time = omp_get_wtime() - start_time;
-    printf("%lf\n", run_time);
+    printf("openmp time: %lf\n", run_time);
 
-    for (int i = 0; i < n; i++)
-    {
-        printf("%d\n", arr[i]);
-    }
-    printf("\n");
+    // for (int i = 0; i < n; i++)
+    // {
+    //     printf("%d\n", arr[i]);
+    // }
+    // printf("\n");
 
     free(arr);
 

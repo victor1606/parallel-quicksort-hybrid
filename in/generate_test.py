@@ -12,6 +12,7 @@ def generate_and_write_input_file(file_path, array_size):
         print(f"An error occurred: {str(e)}")
 
 # Example usage:
-file_path = 'input.txt'  # Replace with the desired output file path
-array_size = 5999999  # Replace with the desired array size
+file_path = 'input_18mil.txt'  # Replace with the desired output file path
+# array_size = 6000000  # Replace with the desired array size
+array_size = 18000000
 generate_and_write_input_file(file_path, array_size)

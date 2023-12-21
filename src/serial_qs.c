@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     quicksort(arr, 0, n - 1);
 
     run_time = omp_get_wtime() - start_time;
-    printf("%lf\n", run_time);
+    printf("serial time: %lf\n", run_time);
 
     for (int i = 0; i < n; i++)
     {

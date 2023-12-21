@@ -20,7 +20,7 @@ OUTPUT_MPI = ./out/mpi.out
 OUTPUT_PTHREADS = ./out/pthreads.out
 
 build:
-	$(CC) $(SRC_SERIAL) -o $(BIN_SERIAL) $(CFLAGS)
+	$(CC) $(SRC_SERIAL) -fopenmp -o $(BIN_SERIAL) $(CFLAGS)
 	$(CC) $(SRC_OPENMP) -fopenmp -o $(BIN_OPENMP) $(CFLAGS)
 	$(MPICC) $(SRC_MPI) -o $(BIN_MPI) $(CFLAGS)
 	$(CC) $(SRC_PTHREADS) -pthread -o $(BIN_PTHREADS) $(CFLAGS)
