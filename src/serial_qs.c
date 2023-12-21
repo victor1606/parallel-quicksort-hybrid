@@ -91,11 +91,11 @@ int main(int argc, char *argv[])
     run_time = omp_get_wtime() - start_time;
     printf("serial time: %lf\n", run_time);
 
-    for (int i = 0; i < n; i++)
-    {
-        printf("%d\n", arr[i]);
-    }
-    printf("\n");
+    // for (int i = 0; i < n; i++)
+    // {
+    //     printf("%d\n", arr[i]);
+    // }
+    // printf("\n");
 
     free(arr);
 

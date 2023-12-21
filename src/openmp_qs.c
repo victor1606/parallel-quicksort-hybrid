@@ -1,4 +1,3 @@
-/* C implementation QuickSort */
 #include <stdio.h>
 #include <omp.h>
 #include <math.h>
@@ -13,7 +12,7 @@ void swap(int *a, int *b)
 
 /* This function takes last element as pivot, places
 the pivot element at its correct position in sorted
-    array, and places all smaller (smaller than pivot)
+array, and places all smaller (smaller than pivot)
 to left of pivot and all greater elements to right
 of pivot */
 int partition(int arr[], int low, int high)
@@ -22,8 +21,7 @@ int partition(int arr[], int low, int high)
     int i = (low - 1);     // Index of smaller element
     for (int j = low; j <= high - 1; j++)
     {
-        // If current element is smaller than or
-        // equal to pivot
+        // If current element is smaller than or equal to pivot
         if (arr[j] <= pivot)
         {
             i++; // increment index of smaller element
@@ -34,7 +32,7 @@ int partition(int arr[], int low, int high)
     return (i + 1);
 }
 
-void quickSort(int arr[], int low, int high)
+void quicksort(int arr[], int low, int high)
 {
     if (low < high)
     {
@@ -42,12 +40,12 @@ void quickSort(int arr[], int low, int high)
 
         #pragma omp task firstprivate(arr, low, pi)
         {
-            quickSort(arr, low, pi - 1);
+            quicksort(arr, low, pi - 1);
         }
 
         #pragma omp task firstprivate(arr, high, pi)
         {
-            quickSort(arr, pi + 1, high);
+            quicksort(arr, pi + 1, high);
         }
     }
 }
@@ -107,7 +105,7 @@ int main(int argc, char *argv[])
     #pragma omp parallel
     {
         #pragma omp single
-        quickSort(arr, 0, n - 1);
+        quicksort(arr, 0, n - 1);
     }
 
     run_time = omp_get_wtime() - start_time;
