@@ -1,9 +1,21 @@
 #include <mpi.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 #include <omp.h>
+
+// Limit the recursion depth for new thread creation
+#define MAX_DEPTH 4
+
+typedef struct {
+    int *arr;
+    int start;
+    int end;
+    int depth;
+} thread_args;
+
 
 void swap(int *arr, int i, int j)
 {
@@ -30,15 +42,51 @@ void quicksort(int *arr, int start, int end) {
 
     swap(arr, start, index);
 
-    #pragma omp task firstprivate(arr, start, index)
-    {
-        quicksort(arr, start, index - start);
+    quicksort(arr, start, index - start);
+    quicksort(arr, index + 1, start + end - index - 1);
+}
+
+void *quicksort_thread(void *args)
+{
+    thread_args *t_args = (thread_args *)args;
+    int start = t_args->start;
+    int end = t_args->end;
+    int depth = t_args->depth;
+    int *arr = t_args->arr;
+
+    if (end <= 1) {
+        return NULL;
     }
-    
-    #pragma omp task firstprivate(arr, start, index, end)
-    {
+
+    int pivot = arr[start + end / 2];
+    swap(arr, start, start + end / 2);
+
+    int index = start;
+    for (int i = start + 1; i < start + end; i++) {
+        if (arr[i] < pivot) {
+            index++;
+            swap(arr, i, index);
+        }
+    }
+
+    swap(arr, start, index);
+
+    if (depth < MAX_DEPTH) {
+        thread_args left_args = {arr, start, index - start, depth + 1};
+        thread_args right_args = {arr, index + 1, start + end - index - 1, depth + 1};
+
+        pthread_t left_thread, right_thread;
+        pthread_create(&left_thread, NULL, quicksort_thread, &left_args);
+        pthread_create(&right_thread, NULL, quicksort_thread, &right_args);
+
+        pthread_join(left_thread, NULL);
+        pthread_join(right_thread, NULL);
+    } else {
+        quicksort(arr, start, index - start);
         quicksort(arr, index + 1, start + end - index - 1);
     }
+
+    return NULL;
 }
 
 // Used to merge 2 arrays
@@ -166,16 +214,12 @@ int main(int argc, char *argv[])
         ? chunk_size
         : (n - chunk_size * rank);
 
-    omp_set_num_threads(4);
+    thread_args args = {chunk, 0, own_chunk_size, 0}; // Depth starts at 0
+    pthread_t sorting_thread;
+    pthread_create(&sorting_thread, NULL, quicksort_thread, &args);
+    pthread_join(sorting_thread, NULL);
 
-    // Added OpenMP
-    #pragma omp parallel
-    {
-        #pragma omp single nowait
-        {
-            quicksort(chunk, 0, own_chunk_size);
-        }
-    }
+    // quicksort(chunk, 0, own_chunk_size);
 
     for (int step = 1; step < size; step = 2 * step)
     {
@@ -216,7 +260,7 @@ int main(int argc, char *argv[])
     if (rank == 0)
     {
         run_time = omp_get_wtime() - start_time;
-        printf("openmp + mpi time: %lf\n", run_time);
+        printf("pthreads + mpi time: %lf\n", run_time);
 
         // for (int i = 0; i < n; i++)
         // {

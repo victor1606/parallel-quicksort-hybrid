@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <omp.h>
 
-// Function to swap two numbers
 void swap(int *arr, int i, int j)
 {
     int t = arr[i];
@@ -13,18 +12,15 @@ void swap(int *arr, int i, int j)
     arr[j] = t;
 }
 
-// Function that performs the Quick Sort for an array arr[] starting from the
-// index start and ending at index end
 void quicksort(int *arr, int start, int end) {
-    int pivot, index;
-
-    if (end <= 1)
+    if (end <= 1) {
         return;
+    }
 
-    pivot = arr[start + end / 2];
+    int pivot = arr[start + end / 2];
     swap(arr, start, start + end / 2);
 
-    index = start;
+    int index = start;
     for (int i = start + 1; i < start + end; i++) {
         if (arr[i] < pivot) {
             index++;
@@ -36,10 +32,9 @@ void quicksort(int *arr, int start, int end) {
 
     quicksort(arr, start, index - start);
     quicksort(arr, index + 1, start + end - index - 1);
-
 }
 
-// Function that merges the two arrays
+// Used to merge 2 arrays
 int *merge(int *arr1, int n1, int *arr2, int n2)
 {
     int *result = (int *)malloc((n1 + n2) * sizeof(int));
@@ -59,16 +54,11 @@ int *merge(int *arr1, int n1, int *arr2, int n2)
             result[k] = arr1[i];
             i++;
         }
-
-        // Indices in bounds as i < n1
-        // && j < n2
         else if (arr1[i] < arr2[j])
         {
             result[k] = arr1[i];
             i++;
         }
-
-        // v2[j] <= v1[i]
         else
         {
             result[k] = arr2[j];
@@ -78,14 +68,12 @@ int *merge(int *arr1, int n1, int *arr2, int n2)
     return result;
 }
 
-// Driver Code
 int main(int argc, char *argv[])
 {
     int n;
     int *arr = NULL;
     int chunk_size, own_chunk_size;
     int *chunk;
-    // FILE *file = NULL;
     MPI_Status status;
 
     if (argc != 2)
@@ -105,9 +93,6 @@ int main(int argc, char *argv[])
     {
         char *input_filename = argv[1];
         FILE *file = fopen(input_filename, "r");
-        // file = fopen(argv[1], "r");
-
-        // Printing Error message if any
         if (file == NULL)
         {
             printf("Error in opening file\n");
@@ -199,8 +184,8 @@ int main(int argc, char *argv[])
                 return 1;
             }
 
-            MPI_Recv(chunk_received, received_chunk_size, MPI_INT,
-                rank + step, 0, MPI_COMM_WORLD, &status);
+            MPI_Recv(chunk_received, received_chunk_size, MPI_INT, rank + step,
+                0, MPI_COMM_WORLD, &status);
 
             arr = merge(chunk, own_chunk_size, chunk_received,
                 received_chunk_size);

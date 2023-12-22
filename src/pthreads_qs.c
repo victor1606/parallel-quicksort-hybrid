@@ -3,8 +3,8 @@
 #include <pthread.h>
 #include <omp.h>
 
-#define MAX_THREADS 8 // Limit the number of threads
-#define MAX_DEPTH 4   // Limit the recursion depth for new thread creation
+// Limit the recursion depth for new thread creation
+#define MAX_DEPTH 4
 
 typedef struct
 {
@@ -12,7 +12,7 @@ typedef struct
     int low;
     int high;
     int depth;
-} ThreadArgs;
+} thread_args;
 
 void swap(int *a, int *b)
 {
@@ -40,54 +40,32 @@ int partition(int arr[], int low, int high)
 
 void *quicksort(void *args)
 {
-    ThreadArgs *targs = (ThreadArgs *)args;
-    int low = targs->low;
-    int high = targs->high;
-    int depth = targs->depth;
-    int *arr = targs->arr;
+    thread_args *t_args = (thread_args *)args;
+    int low = t_args->low;
+    int high = t_args->high;
+    int depth = t_args->depth;
+    int *arr = t_args->arr;
 
     if (low < high)
     {
         int pi = partition(arr, low, high);
 
-        ThreadArgs args1 = {arr, low, pi - 1, depth + 1};
-        ThreadArgs args2 = {arr, pi + 1, high, depth + 1};
+        thread_args left_args = {arr, low, pi - 1, depth + 1};
+        thread_args right_args = {arr, pi + 1, high, depth + 1};
 
         if (depth < MAX_DEPTH)
         {
-            pthread_t thread1, thread2;
-            int thread1_created = 0, thread2_created = 0;
+            pthread_t left_thread, right_thread;
+            pthread_create(&left_thread, NULL, quicksort, &left_args);
+            pthread_create(&right_thread, NULL, quicksort, &right_args);
 
-            if (pthread_create(&thread1, NULL, quicksort, &args1) == 0)
-            {
-                thread1_created = 1;
-            }
-            else
-            {
-                quicksort(&args1);
-            }
-
-            if (pthread_create(&thread2, NULL, quicksort, &args2) == 0)
-            {
-                thread2_created = 1;
-            }
-            else
-            {
-                quicksort(&args2);
-            }
-
-            if (thread1_created) {
-                pthread_join(thread1, NULL);
-            }
-            
-            if (thread2_created) {
-                pthread_join(thread2, NULL);
-            }
+            pthread_join(left_thread, NULL);
+            pthread_join(right_thread, NULL);
         }
         else
         {
-            quicksort(&args1);
-            quicksort(&args2);
+            quicksort(&left_args);
+            quicksort(&right_args);
         }
     }
     return NULL;
@@ -142,7 +120,7 @@ int main(int argc, char *argv[])
     double start_time, run_time;
     start_time = omp_get_wtime();
 
-    ThreadArgs args = {arr, 0, n - 1, 0};
+    thread_args args = {arr, 0, n - 1, 0};
     quicksort(&args);
 
     run_time = omp_get_wtime() - start_time;
