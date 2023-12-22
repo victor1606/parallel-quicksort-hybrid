@@ -54,12 +54,12 @@ I added the OpenMP directives to the MPI implementation.
 Added the Pthreads quicksort function to the MPI implementation.
 
 ## 6. Results: 4 threads/procs
-serial time: 1.044696  
-openmp time: 0.375250  
-mpi time: 0.727631  
-pthreads time: 0.413353  
-openmp + mpi time: 0.766816  
-pthreads + mpi time: 0.706754  
+- serial time: 1.044696  
+- openmp time: 0.375250  
+- mpi time: 0.727631  
+- pthreads time: 0.413353  
+- openmp + mpi time: 0.766816  
+- pthreads + mpi time: 0.706754  
 
 ## 7. Sources:
 https://www.geeksforgeeks.org/implementation-of-quick-sort-using-mpi-omp-and-posix-thread/  
