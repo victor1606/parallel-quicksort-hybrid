@@ -1,4 +1,4 @@
-# Quicksort - OpenMP, MPI, Pthreads, OpenMP + MPI hybrid
+# Quicksort - OpenMP, MPI, Pthreads, OpenMP + MPI hybrid, Pthreads + MPI hybrid
 
 Calugaritoiu Ion-Victor 342C1
 
