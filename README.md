@@ -62,6 +62,5 @@ openmp + mpi time: 0.766816
 pthreads + mpi time: 0.706754  
 
 ## 7. Sources:
-https://www.geeksforgeeks.org/implementation-of-quick-sort-using-mpi-omp-
-and-posix-thread/  
+https://www.geeksforgeeks.org/implementation-of-quick-sort-using-mpi-omp-and-posix-thread/  
 https://iq.opengenus.org/parallel-quicksort/
