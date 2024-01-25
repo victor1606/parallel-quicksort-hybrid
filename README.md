@@ -1,7 +1,5 @@
 # Quicksort - OpenMP, MPI, Pthreads, OpenMP + MPI hybrid, Pthreads + MPI hybrid
 
-Calugaritoiu Ion-Victor 342C1
-
 - "run.sh" runs all implementations and prints the recorded durations.
 - Used "omp_get_wtime" to monitor performance for all 4 versions.
 
